@@ -132,6 +132,7 @@ CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000/"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+DOMAIN = os.getenv("DOMAIN", "127.0.0.1:8000")
 
 LOGGING = {
     "version": 1,

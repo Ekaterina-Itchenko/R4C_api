@@ -1,4 +1,10 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
+
+from django.db.models import Count
+from django.utils import timezone
 
 from common.utils import query_debugger
 from robots.business_logic.dto import AddRobotDTO
@@ -7,6 +13,9 @@ from robots.business_logic.services.errors import (
     RobotVersionDoesNotExistError,
 )
 from robots.models import Robot, RobotModel, RobotVersion
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 logger = logging.getLogger(__name__)
 
@@ -41,3 +50,19 @@ def create_robot(data: AddRobotDTO) -> None:
             extra={"model": data.model, "version": data.version},
         )
         raise RobotVersionDoesNotExistError(f"There is no version [{data.version}] for robots models.")
+
+
+@query_debugger
+def get_robots(days: int = 7) -> QuerySet:
+    end_date = timezone.now()
+    start_date = end_date - timezone.timedelta(days=days)
+
+    versions = (
+        RobotVersion.objects.annotate(robots_count=Count("robots", distinct=True))
+        .select_related("model")
+        .prefetch_related("robots")
+        .filter(robots__created__range=(start_date, end_date))
+        .values("model__name", "version", "robots_count")
+        .order_by("model__name")
+    )
+    return versions.all()
