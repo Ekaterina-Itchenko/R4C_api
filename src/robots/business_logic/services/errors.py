@@ -1,0 +1,6 @@
+class RobotModelDoesNotExistError(Exception):
+    ...
+
+
+class RobotVersionDoesNotExistError(Exception):
+    ...
