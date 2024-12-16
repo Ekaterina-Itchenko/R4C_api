@@ -7,7 +7,6 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from urllib.parse import quote
 
-from dacite.exceptions import MissingValueError, WrongTypeError
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
@@ -17,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 from pandas import DataFrame, ExcelWriter
 
 from common.converters import convert_data_from_request_to_dto
+from common.errors import InvalidNumberParametersError, WrongParameterTypeError
 from robots.business_logic.dto import AddRobotDTO
 from robots.business_logic.services import create_robot, get_robots
 from robots.business_logic.services.errors import (
@@ -68,11 +68,9 @@ def add_robot_controller(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest(content="Model does not exist.")
     except RobotVersionDoesNotExistError:
         return HttpResponseBadRequest(content="Version does not exist.")
-    except MissingValueError:
-        logger.error(msg="Invalid number of parameters.", extra={"data": data})
+    except InvalidNumberParametersError:
         return HttpResponseBadRequest(content="Invalid number of parameters to create a robot instance.")
-    except WrongTypeError:
-        logger.error(msg="Invalid type of parameters.", extra={"data": data})
+    except WrongParameterTypeError:
         return HttpResponseBadRequest(content="Invalid type of parameters.")
 
 

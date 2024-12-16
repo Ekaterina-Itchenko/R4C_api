@@ -33,7 +33,6 @@ DEBUG = True
 
 ALLOWED_HOSTS: list = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -128,7 +127,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000/"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1:8000/",
+]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -170,3 +172,12 @@ LOGGING = {
 
 
 LOG_LEVEL = os.environ["LOG_LEVEL"]
+
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")

@@ -66,3 +66,9 @@ def get_robots(days: int = 7) -> QuerySet:
         .order_by("model__name")
     )
     return versions.all()
+
+
+@query_debugger
+def get_robots_by_serial(serial: str, is_active: bool) -> QuerySet[Robot]:
+    result = Robot.objects.filter(serial=serial, is_active=is_active).all()
+    return result

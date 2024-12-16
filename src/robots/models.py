@@ -29,6 +29,7 @@ class Robot(models.Model):
     serial = models.CharField(max_length=5, blank=False, null=False)
     version = models.ForeignKey(to="RobotVersion", on_delete=models.CASCADE, related_name="robots")
     created = models.DateTimeField(blank=False, null=False)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "robots"
