@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from dotenv import load_dotenv
+
+from R4C.logger_formater import ContextFormatter
+
+load_dotenv()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,8 +31,7 @@ SECRET_KEY = "mztx@x_-=gfhc9xs@bm58m&@3pc7##opo14zob!(l2tus05+jo"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS: list = []
 
 # Application definition
 
@@ -121,3 +126,58 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1:8000/",
+]
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DOMAIN = os.getenv("DOMAIN", "127.0.0.1:8000")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console_formatter": {
+            "()": ContextFormatter,
+            "format": "[{asctime}] - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "style": "{",
+        }
+    },
+    "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+            "level": os.environ["LOG_LEVEL"],
+            "formatter": "console_formatter",
+        }
+    },
+    "root": {
+        "level": os.environ["LOG_LEVEL"],
+        "handlers": ["console_handler"],
+    },
+    "loggers": {
+        "django": {
+            "level": os.environ["LOG_LEVEL"],
+            "handlers": ["console_handler"],
+        },
+        "PIL": {
+            "level": "WARNING",
+            "handlers": ["console_handler"],
+        },
+    },
+}
+
+
+LOG_LEVEL = os.environ["LOG_LEVEL"]
+
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")

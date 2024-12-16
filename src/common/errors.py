@@ -1,0 +1,6 @@
+class InvalidNumberParametersError(Exception):
+    ...
+
+
+class WrongParameterTypeError(Exception):
+    ...
